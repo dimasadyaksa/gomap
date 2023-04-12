@@ -60,7 +60,7 @@ func Filter[K comparable, V any](m map[K]V, predicate func(K, V) bool) map[K]V {
 }
 
 // Combine combines two maps into a single map. If a key exists in both maps, the value from the second map will be used.
-func Combine[K comparable, V any](m1 map[K]V, m2 map[K]V) map[K]V {
+func Combine[K comparable, V any](m1, m2 map[K]V) map[K]V {
 	m := make(map[K]V, len(m1)+len(m2))
 
 	for key, value := range m1 {
@@ -108,7 +108,7 @@ func Some[K comparable, V any](m map[K]V, predicate func(K, V) bool) bool {
 }
 
 // Equal returns true if the two maps are equal
-func Equal[K, V comparable](m1 map[K]V, m2 map[K]V) bool {
+func Equal[K, V comparable](m1, m2 map[K]V) bool {
 	if len(m1) != len(m2) {
 		return false
 	}
@@ -123,7 +123,7 @@ func Equal[K, V comparable](m1 map[K]V, m2 map[K]V) bool {
 }
 
 // EqualFunc returns true if the two maps are equal using the equal function
-func EqualFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equal func(V, V) bool) bool {
+func EqualFunc[K comparable, V any](m1, m2 map[K]V, equal func(V, V) bool) bool {
 	if len(m1) != len(m2) {
 		return false
 	}

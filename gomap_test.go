@@ -2,8 +2,9 @@ package gomap_test
 
 import (
 	"fmt"
-	"github.com/dimasadyaksa/gomap"
 	"testing"
+
+	"github.com/dimasadyaksa/gomap"
 )
 
 func TestKeys(t *testing.T) {
@@ -24,7 +25,6 @@ func TestKeys(t *testing.T) {
 			t.Errorf("expect key: %s", key)
 		}
 	}
-
 }
 
 func TestFind(t *testing.T) {
@@ -323,7 +323,6 @@ func BenchmarkReduce(b *testing.B) {
 			return r + value
 		})
 	}
-
 }
 
 func BenchmarkSlice(b *testing.B) {
