@@ -257,6 +257,25 @@ func TestEqual(t *testing.T) {
 	}
 }
 
+func TestEqualWithDifferentLength(t *testing.T) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	m2 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+		"four":  4,
+	}
+
+	if gomap.Equal(m1, m2) {
+		t.Error("expect false")
+	}
+}
+
 func TestEqualFunc(t *testing.T) {
 	m1 := map[string]int{
 		"one":   1,
@@ -277,6 +296,27 @@ func TestEqualFunc(t *testing.T) {
 	}
 
 	m2["three"] = 4
+
+	if gomap.EqualFunc(m1, m2, func(a int, b int) bool {
+		return a == b
+	}) {
+		t.Error("expect false")
+	}
+}
+
+func TestEqualFuncWithDifferentLength(t *testing.T) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	m2 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+		"four":  4,
+	}
 
 	if gomap.EqualFunc(m1, m2, func(a int, b int) bool {
 		return a == b
@@ -367,8 +407,8 @@ func BenchmarkCombine(b *testing.B) {
 
 func BenchmarkMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		gomap.Map([]int{1, 2, 3}, func(value int) string {
-			return fmt.Sprint(value)
+		gomap.Map([]int{1, 2, 3}, func(value int) int {
+			return value
 		})
 	}
 }
