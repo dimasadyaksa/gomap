@@ -27,6 +27,26 @@ func TestKeys(t *testing.T) {
 	}
 }
 
+func TestValues(t *testing.T) {
+	m := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+
+	v := gomap.Values(m)
+
+	if len(v) != 3 {
+		t.Errorf("expect 3 values; got %d values", len(v))
+	}
+
+	for _, value := range v {
+		if m[value] != value {
+			t.Errorf("expect value: %d; got value: %d", value, m[value])
+		}
+	}
+}
+
 func TestFind(t *testing.T) {
 	m := map[string]int{
 		"one":   1,
@@ -334,6 +354,18 @@ func BenchmarkKeys(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gomap.Keys(m)
+	}
+}
+
+func BenchmarkValues(b *testing.B) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	for i := 0; i < b.N; i++ {
+		gomap.Values(m)
 	}
 }
 
