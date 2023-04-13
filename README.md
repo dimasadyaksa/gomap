@@ -1,5 +1,7 @@
 # Gomap
 
+[![codecov](https://codecov.io/github/dimasadyaksa/gomap/branch/develop/graph/badge.svg?token=TNDBN2DH6G)](https://codecov.io/github/dimasadyaksa/gomap)
+
 Gomap is a package that contains several functions to make it easier to work with maps in Go.
 
 ## Installation
