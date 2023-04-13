@@ -407,8 +407,8 @@ func BenchmarkCombine(b *testing.B) {
 
 func BenchmarkMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		gomap.Map([]int{1, 2, 3}, func(value int) string {
-			return fmt.Sprint(value)
+		gomap.Map([]int{1, 2, 3}, func(value int) int {
+			return value
 		})
 	}
 }
