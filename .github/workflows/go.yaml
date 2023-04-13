@@ -26,6 +26,9 @@ jobs:
       - name: Install tparse
         run: go install github.com/mfridman/tparse@latest
 
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v3.4.0
+
       - name: Run Test
         run: go test -race -count=1 -timeout 30s -coverprofile=coverage.txt -covermode=atomic  -json ./... | tparse -all -format markdown
 
