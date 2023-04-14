@@ -92,4 +92,4 @@ func EqualFunc[K comparable, V any](m1, m2 map[K]V, equal func(V, V) bool) bool 
 	return len(m1) == len(m2) && Every(m1, func(k K, v V) bool { v2, ok := m2[k]; return ok && equal(v, v2) })
 }
 
-func eq[T comparable](a T, b T) bool { return a == b }
+func eq[T comparable](a, b T) bool { return a == b }
