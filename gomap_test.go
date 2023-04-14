@@ -199,7 +199,7 @@ func TestMap(t *testing.T) {
 	arr := []int{1, 2, 3}
 
 	v := gomap.Map(arr, func(value int) string {
-		return fmt.Sprint(value)
+		return fmt.Sprint(value + 1)
 	})
 
 	if len(v) != 3 {
@@ -375,11 +375,10 @@ func BenchmarkFind(b *testing.B) {
 		"two":   2,
 		"three": 3,
 	}
+	predicate := func(key string, value int) bool { return key == "two" }
 
 	for i := 0; i < b.N; i++ {
-		gomap.Find(m, func(key string, value int) bool {
-			return key == "two"
-		})
+		gomap.Find(m, predicate)
 	}
 }
 
@@ -389,23 +388,10 @@ func BenchmarkReduce(b *testing.B) {
 		"two":   2,
 		"three": 3,
 	}
+	reducer := func(r int, key string, value int) int { return r + value }
 
 	for i := 0; i < b.N; i++ {
-		gomap.Reduce(m, 0, func(r int, key string, value int) int {
-			return r + value
-		})
-	}
-}
-
-func BenchmarkSlice(b *testing.B) {
-	m := map[string]int{
-		"one":   1,
-		"two":   2,
-		"three": 3,
-	}
-
-	for i := 0; i < b.N; i++ {
-		gomap.Values(m)
+		gomap.Reduce(m, 0, reducer)
 	}
 }
 
@@ -423,78 +409,89 @@ func BenchmarkFilter(b *testing.B) {
 }
 
 func BenchmarkCombine(b *testing.B) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	m2 := map[string]int{
+		"four":  4,
+		"five":  5,
+		"six":   6,
+		"seven": 7,
+	}
+
 	for i := 0; i < b.N; i++ {
-		gomap.Combine(map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		}, map[string]int{
-			"four":  4,
-			"five":  5,
-			"six":   6,
-			"seven": 7,
-		})
+		gomap.Combine(m1, m2)
 	}
 }
 
 func BenchmarkMap(b *testing.B) {
+	slice := []int{1, 2, 3}
+	keyFunc := func(value int) int { return value }
+
 	for i := 0; i < b.N; i++ {
-		gomap.Map([]int{1, 2, 3}, func(value int) int {
-			return value
-		})
+		gomap.Map(slice, keyFunc)
 	}
 }
 
 func BenchmarkEvery(b *testing.B) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	predicate := func(key string, value int) bool { return value > 0 }
+
 	for i := 0; i < b.N; i++ {
-		gomap.Every(map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		}, func(key string, value int) bool {
-			return value > 0
-		})
+		gomap.Every(m, predicate)
 	}
 }
 
 func BenchmarkSome(b *testing.B) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	predicate := func(key string, value int) bool { return value > 1 }
+
 	for i := 0; i < b.N; i++ {
-		gomap.Some(map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		}, func(key string, value int) bool {
-			return value > 1
-		})
+		gomap.Some(m, predicate)
 	}
 }
 
 func BenchmarkEqual(b *testing.B) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	m2 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
 	for i := 0; i < b.N; i++ {
-		gomap.Equal(map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		}, map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		})
+		gomap.Equal(m1, m2)
 	}
 }
 
 func BenchmarkEqualFunc(b *testing.B) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	m2 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	eqFunc := func(a int, b int) bool { return a == b }
+
 	for i := 0; i < b.N; i++ {
-		gomap.EqualFunc(map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		}, map[string]int{
-			"one":   1,
-			"two":   2,
-			"three": 3,
-		}, func(a int, b int) bool {
-			return a == b
-		})
+		gomap.EqualFunc(m1, m2, eqFunc)
 	}
 }
