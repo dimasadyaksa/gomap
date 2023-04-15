@@ -23,11 +23,6 @@ jobs:
       - name: Display Go version
         run: go version
 
-      - name: Install Requirements
-        run: |
-          apt-get update
-          apt-get install -y ca-certificates gcc
-
       - name: Install tparse
         run: go install github.com/mfridman/tparse@latest
 
