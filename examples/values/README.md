@@ -1,6 +1,6 @@
 ## Values
 
-The Values function is used to get the values of a map.
+The `Values` function is used to get the values of a map.
 It takes a map as its argument and returns a slice of the values.
 
 ```go

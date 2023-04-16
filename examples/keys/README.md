@@ -1,6 +1,6 @@
 ## Keys
 
-The Keys function is used to get the keys of a map. 
+The `Keys` function is used to get the keys of a map. 
 It takes a map as its argument and returns a slice of the keys.
 
 ```go

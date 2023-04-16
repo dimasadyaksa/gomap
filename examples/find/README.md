@@ -1,6 +1,6 @@
 ## Find
 
-The Find function is used to find a value in a map based on a finder function
+The `Find` function is used to find a value in a map based on a finder function
 that returns a boolean. It takes a map and a finder function as its arguments.
 
 ```go
