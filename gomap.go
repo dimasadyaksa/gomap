@@ -1,5 +1,7 @@
 package gomap
 
+type Predicate[K comparable, V any] func(K, V) bool
+
 // Keys returns a slice of keys from a map
 // The order of the values is not guaranteed
 func Keys[K comparable, V any](m map[K]V) []K {
@@ -15,9 +17,17 @@ func Values[K comparable, V any](m map[K]V) []V {
 func valueReducer[K, V any](s []V, _ K, v V) []V                   { return append(s, v) }
 func keyReducer[K, V any](s []K, k K, _ V) []K                     { return append(s, k) }
 func copyReducer[K comparable, V any](r map[K]V, k K, v V) map[K]V { r[k] = v; return r }
+func conditionalValueReducer[K comparable, V any](p Predicate[K, V]) func([]V, K, V) []V {
+	return func(s []V, k K, v V) []V {
+		if p(k, v) {
+			return append(s, v)
+		}
+		return s
+	}
+}
 
 // Find returns the first value that matches the predicate
-func Find[K comparable, V any](m map[K]V, predicate func(K, V) bool) (V, bool) {
+func Find[K comparable, V any](m map[K]V, predicate Predicate[K, V]) (V, bool) {
 	var v V
 
 	for key, value := range m {
@@ -41,7 +51,7 @@ func Reduce[K comparable, V any, R any](m map[K]V, initial R, reducer func(R, K,
 }
 
 // Filter returns a map of values that match the predicate
-func Filter[K comparable, V any](m map[K]V, predicate func(K, V) bool) map[K]V {
+func Filter[K comparable, V any](m map[K]V, predicate Predicate[K, V]) map[K]V {
 	return Reduce(m, make(map[K]V, len(m)), func(r map[K]V, k K, v V) map[K]V {
 		if predicate(k, v) {
 			r[k] = v
@@ -72,12 +82,12 @@ func Map[K comparable, V any](s []V, key func(idx int) K) map[K]V {
 }
 
 // Every returns true if every value in the map matches the predicate
-func Every[K comparable, V any](m map[K]V, predicate func(K, V) bool) bool {
+func Every[K comparable, V any](m map[K]V, predicate Predicate[K, V]) bool {
 	return Reduce(m, true, func(b bool, k K, v V) bool { return b && predicate(k, v) })
 }
 
 // Some returns true if any value in the map matches the predicate
-func Some[K comparable, V any](m map[K]V, predicate func(K, V) bool) bool {
+func Some[K comparable, V any](m map[K]V, predicate Predicate[K, V]) bool {
 	_, ok := Find(m, predicate)
 	return ok
 }
@@ -93,3 +103,28 @@ func EqualFunc[K comparable, V any](m1, m2 map[K]V, equal func(V, V) bool) bool 
 }
 
 func eq[T comparable](a, b T) bool { return a == b }
+
+// Clear removes all values from the map
+func Clear[K comparable, V any](m map[K]V) {
+	Reduce(m, m, func(r map[K]V, k K, v V) map[K]V { delete(r, k); return r })
+}
+
+// FindAll returns a slice of values that match the predicate
+func FindAll[K comparable, V any](m map[K]V, predicate Predicate[K, V]) []V {
+	return Reduce(m, make([]V, 0, len(m)), conditionalValueReducer[K, V](predicate))
+}
+
+// Intersect returns a map of values that exist in both maps
+func Intersect[K comparable, V any](m1, m2 map[K]V) map[K]V {
+	return Filter(m1, func(k K, v V) bool { _, ok := m2[k]; return ok })
+}
+
+// Difference returns a map of values that exist in the first map but not the second
+func Difference[K comparable, V any](m1, m2 map[K]V) map[K]V {
+	return Filter(m1, func(k K, v V) bool { _, ok := m2[k]; return !ok })
+}
+
+// Replace returns a map with the values replaced by the result of the replacer function
+func Replace[K comparable, V any](m map[K]V, replacer func(k K, v V) V) map[K]V {
+	return Reduce(m, make(map[K]V, len(m)), func(r map[K]V, k K, v V) map[K]V { r[k] = replacer(k, v); return r })
+}

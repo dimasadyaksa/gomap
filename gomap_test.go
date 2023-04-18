@@ -345,6 +345,119 @@ func TestEqualFuncWithDifferentLength(t *testing.T) {
 	}
 }
 
+func TestClear(t *testing.T) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	gomap.Clear(m)
+
+	if len(m) != 0 {
+		t.Errorf("expect 0 values; got %d values", len(m))
+	}
+}
+
+func TestFindAll(t *testing.T) {
+	m := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+
+	v := gomap.FindAll(m, func(key int, value int) bool {
+		return value > 0
+	})
+
+	if len(v) != 2 {
+		t.Fatalf("expect 2 values; got %d values", len(v))
+	}
+
+	v = gomap.FindAll(m, func(key int, value int) bool {
+		return value > 2
+	})
+
+	if len(v) != 0 {
+		t.Fatalf("expect 0 values; got %d values", len(v))
+	}
+}
+
+func TestIntersect(t *testing.T) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	m2 := map[string]int{
+		"one":  1,
+		"two":  2,
+		"four": 4,
+	}
+
+	m3 := gomap.Intersect(m1, m2)
+
+	if len(m3) != 2 {
+		t.Fatalf("expect 2 values; got %d values", len(m3))
+	}
+
+	if m3["one"] != 1 {
+		t.Errorf("expect 1; got %d", m3["one"])
+	}
+
+	if m3["two"] != 2 {
+		t.Errorf("expect 2; got %d", m3["two"])
+	}
+}
+
+func TestDifference(t *testing.T) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	m2 := map[string]int{
+		"one":  1,
+		"two":  2,
+		"four": 4,
+	}
+
+	m3 := gomap.Difference(m1, m2)
+
+	if len(m3) != 1 {
+		t.Fatalf("expect 1 values; got %d values", len(m3))
+	}
+
+	if m3["three"] != 3 {
+		t.Errorf("expect 3; got %d", m3["three"])
+	}
+}
+
+func TestReplace(t *testing.T) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	replacer := func(key string, value int) int { return value * 10 }
+
+	m = gomap.Replace(m, replacer)
+	if m["one"] != 10 {
+		t.Errorf("expect 10; got %d", m["one1"])
+	}
+
+	if m["two"] != 20 {
+		t.Errorf("expect 20; got %d", m["two1"])
+	}
+
+	if m["three"] != 30 {
+		t.Errorf("expect 30; got %d", m["three1"])
+	}
+}
+
 func BenchmarkKeys(b *testing.B) {
 	m := map[string]int{
 		"one":   1,
@@ -493,5 +606,80 @@ func BenchmarkEqualFunc(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gomap.EqualFunc(m1, m2, eqFunc)
+	}
+}
+
+func BenchmarkClear(b *testing.B) {
+	m := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+	for i := 0; i < b.N; i++ {
+		gomap.Clear(m)
+
+		m[1] = 1
+		m[2] = 2
+		m[3] = 3
+	}
+}
+
+func BenchmarkFindAll(b *testing.B) {
+	m := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	predicate := func(key int, value int) bool { return value > 0 }
+
+	for i := 0; i < b.N; i++ {
+		gomap.FindAll(m, predicate)
+	}
+}
+
+func BenchmarkIntersect(b *testing.B) {
+	m1 := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	m2 := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+
+	for i := 0; i < b.N; i++ {
+		gomap.Intersect(m1, m2)
+	}
+}
+
+func BenchmarkDifference(b *testing.B) {
+	m1 := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	m2 := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+
+	for i := 0; i < b.N; i++ {
+		gomap.Difference(m1, m2)
+	}
+}
+
+func BenchmarkReplace(b *testing.B) {
+	m := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	replacer := func(key int, value int) int { return value + 1 }
+
+	for i := 0; i < b.N; i++ {
+		gomap.Replace(m, replacer)
 	}
 }
