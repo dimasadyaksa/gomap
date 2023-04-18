@@ -123,3 +123,8 @@ func Intersect[K comparable, V any](m1, m2 map[K]V) map[K]V {
 func Difference[K comparable, V any](m1, m2 map[K]V) map[K]V {
 	return Filter(m1, func(k K, v V) bool { _, ok := m2[k]; return !ok })
 }
+
+// Replace returns a map with the values replaced by the result of the replacer function
+func Replace[K comparable, V any](m map[K]V, replacer func(k K, v V) V) map[K]V {
+	return Reduce(m, make(map[K]V, len(m)), func(r map[K]V, k K, v V) map[K]V { r[k] = replacer(k, v); return r })
+}

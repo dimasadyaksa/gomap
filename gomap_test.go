@@ -435,6 +435,29 @@ func TestDifference(t *testing.T) {
 	}
 }
 
+func TestReplace(t *testing.T) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	replacer := func(key string, value int) int { return value * 10 }
+
+	m = gomap.Replace(m, replacer)
+	if m["one"] != 10 {
+		t.Errorf("expect 10; got %d", m["one1"])
+	}
+
+	if m["two"] != 20 {
+		t.Errorf("expect 20; got %d", m["two1"])
+	}
+
+	if m["three"] != 30 {
+		t.Errorf("expect 30; got %d", m["three1"])
+	}
+}
+
 func BenchmarkKeys(b *testing.B) {
 	m := map[string]int{
 		"one":   1,
@@ -645,5 +668,18 @@ func BenchmarkDifference(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gomap.Difference(m1, m2)
+	}
+}
+
+func BenchmarkReplace(b *testing.B) {
+	m := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	replacer := func(key int, value int) int { return value + 1 }
+
+	for i := 0; i < b.N; i++ {
+		gomap.Replace(m, replacer)
 	}
 }
