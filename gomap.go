@@ -96,8 +96,5 @@ func eq[T comparable](a, b T) bool { return a == b }
 
 // Clear removes all values from the map
 func Clear[K comparable, V any](m map[K]V) {
-	_ = Reduce(m, m, func(r map[K]V, k K, v V) map[K]V {
-		delete(r, k)
-		return r
-	})
+	Reduce(m, m, func(r map[K]V, k K, v V) map[K]V { delete(r, k); return r })
 }
