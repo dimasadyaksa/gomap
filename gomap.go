@@ -27,7 +27,7 @@ func conditionalValueReducer[K comparable, V any](p Predicate[K, V]) func([]V, K
 }
 
 // Find returns the first value that matches the predicate
-func Find[K comparable, V any](m map[K]V, predicate func(K, V) bool) (V, bool) {
+func Find[K comparable, V any](m map[K]V, predicate Predicate[K, V]) (V, bool) {
 	var v V
 
 	for key, value := range m {
@@ -51,7 +51,7 @@ func Reduce[K comparable, V any, R any](m map[K]V, initial R, reducer func(R, K,
 }
 
 // Filter returns a map of values that match the predicate
-func Filter[K comparable, V any](m map[K]V, predicate func(K, V) bool) map[K]V {
+func Filter[K comparable, V any](m map[K]V, predicate Predicate[K, V]) map[K]V {
 	return Reduce(m, make(map[K]V, len(m)), func(r map[K]V, k K, v V) map[K]V {
 		if predicate(k, v) {
 			r[k] = v
@@ -82,12 +82,12 @@ func Map[K comparable, V any](s []V, key func(idx int) K) map[K]V {
 }
 
 // Every returns true if every value in the map matches the predicate
-func Every[K comparable, V any](m map[K]V, predicate func(K, V) bool) bool {
+func Every[K comparable, V any](m map[K]V, predicate Predicate[K, V]) bool {
 	return Reduce(m, true, func(b bool, k K, v V) bool { return b && predicate(k, v) })
 }
 
 // Some returns true if any value in the map matches the predicate
-func Some[K comparable, V any](m map[K]V, predicate func(K, V) bool) bool {
+func Some[K comparable, V any](m map[K]V, predicate Predicate[K, V]) bool {
 	_, ok := Find(m, predicate)
 	return ok
 }
