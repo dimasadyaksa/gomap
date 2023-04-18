@@ -98,3 +98,13 @@ func eq[T comparable](a, b T) bool { return a == b }
 func Clear[K comparable, V any](m map[K]V) {
 	Reduce(m, m, func(r map[K]V, k K, v V) map[K]V { delete(r, k); return r })
 }
+
+// FindAll returns a slice of values that match the predicate
+func FindAll[K comparable, V any](m map[K]V, predicate func(K, V) bool) []V {
+	return Reduce(m, make([]V, 0, len(m)), func(s []V, k K, v V) []V {
+		if predicate(k, v) {
+			return append(s, v)
+		}
+		return s
+	})
+}
