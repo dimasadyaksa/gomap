@@ -118,3 +118,8 @@ func FindAll[K comparable, V any](m map[K]V, predicate Predicate[K, V]) []V {
 func Intersect[K comparable, V any](m1, m2 map[K]V) map[K]V {
 	return Filter(m1, func(k K, v V) bool { _, ok := m2[k]; return ok })
 }
+
+// Difference returns a map of values that exist in the first map but not the second
+func Difference[K comparable, V any](m1, m2 map[K]V) map[K]V {
+	return Filter(m1, func(k K, v V) bool { _, ok := m2[k]; return !ok })
+}

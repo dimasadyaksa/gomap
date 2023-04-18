@@ -411,6 +411,30 @@ func TestIntersect(t *testing.T) {
 	}
 }
 
+func TestDifference(t *testing.T) {
+	m1 := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	m2 := map[string]int{
+		"one":  1,
+		"two":  2,
+		"four": 4,
+	}
+
+	m3 := gomap.Difference(m1, m2)
+
+	if len(m3) != 1 {
+		t.Fatalf("expect 1 values; got %d values", len(m3))
+	}
+
+	if m3["three"] != 3 {
+		t.Errorf("expect 3; got %d", m3["three"])
+	}
+}
+
 func BenchmarkKeys(b *testing.B) {
 	m := map[string]int{
 		"one":   1,
@@ -604,5 +628,22 @@ func BenchmarkIntersect(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gomap.Intersect(m1, m2)
+	}
+}
+
+func BenchmarkDifference(b *testing.B) {
+	m1 := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	m2 := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+
+	for i := 0; i < b.N; i++ {
+		gomap.Difference(m1, m2)
 	}
 }
