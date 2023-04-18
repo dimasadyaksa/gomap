@@ -345,6 +345,20 @@ func TestEqualFuncWithDifferentLength(t *testing.T) {
 	}
 }
 
+func TestClear(t *testing.T) {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	gomap.Clear(m)
+
+	if len(m) != 0 {
+		t.Errorf("expect 0 values; got %d values", len(m))
+	}
+}
+
 func BenchmarkKeys(b *testing.B) {
 	m := map[string]int{
 		"one":   1,
@@ -493,5 +507,20 @@ func BenchmarkEqualFunc(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gomap.EqualFunc(m1, m2, eqFunc)
+	}
+}
+
+func BenchmarkClear(b *testing.B) {
+	m := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+	for i := 0; i < b.N; i++ {
+		gomap.Clear(m)
+
+		m[1] = 1
+		m[2] = 2
+		m[3] = 3
 	}
 }
