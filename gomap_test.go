@@ -359,6 +359,30 @@ func TestClear(t *testing.T) {
 	}
 }
 
+func TestFindAll(t *testing.T) {
+	m := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+
+	v := gomap.FindAll(m, func(key int, value int) bool {
+		return value > 0
+	})
+
+	if len(v) != 2 {
+		t.Fatalf("expect 2 values; got %d values", len(v))
+	}
+
+	v = gomap.FindAll(m, func(key int, value int) bool {
+		return value > 2
+	})
+
+	if len(v) != 0 {
+		t.Fatalf("expect 0 values; got %d values", len(v))
+	}
+}
+
 func BenchmarkKeys(b *testing.B) {
 	m := map[string]int{
 		"one":   1,
@@ -522,5 +546,18 @@ func BenchmarkClear(b *testing.B) {
 		m[1] = 1
 		m[2] = 2
 		m[3] = 3
+	}
+}
+
+func BenchmarkFindAll(b *testing.B) {
+	m := map[int]int{
+		0: 0,
+		1: 1,
+		2: 2,
+	}
+	predicate := func(key int, value int) bool { return value > 0 }
+
+	for i := 0; i < b.N; i++ {
+		gomap.FindAll(m, predicate)
 	}
 }
