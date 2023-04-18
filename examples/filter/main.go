@@ -20,6 +20,6 @@ func main() {
 	filtered := gomap.Filter(m, filterer)
 
 	for key, value := range filtered {
-		fmt.Printf("%s: %d\n", key, value)
+		fmt.Printf("Key: %s, Value: %d", key, value)
 	}
 }
