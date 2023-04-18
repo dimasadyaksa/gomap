@@ -13,3 +13,12 @@ repos:
         args: [--config=.github/linters/.golangci.yml] # optional
       - id: go-ruleguard # requires https://github.com/quasilyte/go-ruleguard
         args: [rules/rules.go] # required
+  - repo: local
+    hooks:
+      - id: go-coverage
+        name: code coverage
+        entry: scripts/coverage.sh
+        language: golang
+        stages: [ 'commit' ]
+        args:
+          - "85"
